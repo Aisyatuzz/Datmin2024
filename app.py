@@ -37,20 +37,21 @@ def main():
 
         # Pastikan model dan vectorizer berhasil di-load
         if model and vectorizer:
+            st.subheader("Prediksi Sentimen Berdasarkan File CSV")
             # Validasi kolom 'stemming_data'
             if 'stemming_data' in data.columns:
                 # Transformasi data menggunakan vectorizer
                 X_test = vectorizer.transform(data['stemming_data'])
 
                 # Prediksi Sentimen
-                if st.button("Prediksi Sentimen untuk Data CSV"):
+                if st.button("Prediksi Sentiment"):
                     # Prediksi dengan model yang sudah dilatih
                     predictions = model.predict(X_test)
 
                     # Tambahkan hasil prediksi ke data
                     data['Predicted Sentiment'] = predictions
 
-                    st.write("Hasil Prediksi Sentimen untuk Data CSV:")
+                    st.write("Hasil Prediksi Sentiment:")
                     st.write(data[['stemming_data', 'Predicted Sentiment']])
 
                     # Visualisasi distribusi sentimen
@@ -89,13 +90,14 @@ def main():
             # Input untuk prediksi kata/kalimat
             st.subheader("Prediksi Sentimen Berdasarkan Input Teks")
             user_input = st.text_input("Masukkan teks Anda di sini:")
-            if user_input:
-                # Transformasi teks menggunakan vectorizer
-                input_vectorized = vectorizer.transform([user_input])
-
-                # Prediksi sentimen
-                sentiment_prediction = model.predict(input_vectorized)[0]
-                st.write(f"Prediksi Sentimen untuk teks: **{sentiment_prediction}**")
+            if st.button("Prediksi Sentiment"):
+                if user_input:
+                    # Transformasi teks menggunakan vectorizer
+                    input_vectorized = vectorizer.transform([user_input])
+    
+                    # Prediksi sentimen
+                    sentiment_prediction = model.predict(input_vectorized)[0]
+                    st.write(f"Prediksi Sentimen untuk teks: **{sentiment_prediction}**")
 
 if __name__ == '__main__':
     main()
