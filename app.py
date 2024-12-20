@@ -85,11 +85,6 @@ def main():
                         mime="text/csv"
                     )
 
-            # Jika hasil prediksi sebelumnya ada, tampilkan kembali
-            if 'csv_predictions' in st.session_state:
-                st.write("Hasil Prediksi Sentimen Sebelumnya:")
-                st.write(st.session_state['csv_predictions'][['stemming_data', 'Predicted Sentiment']])
-
     # Input untuk prediksi kata/kalimat
     st.subheader("Prediksi Sentimen Berdasarkan Input Teks")
     user_input = st.text_input("Masukkan teks Anda di sini:")
@@ -101,11 +96,6 @@ def main():
             # Prediksi sentimen
             sentiment_prediction = model.predict(input_vectorized)[0]
             st.write(f"Prediksi Sentimen untuk teks: **{sentiment_prediction}**")
-
-        # Jika hasil prediksi CSV ada, tetap tampilkan
-        if 'csv_predictions' in st.session_state:
-            st.write("Hasil Prediksi Sentimen Sebelumnya:")
-            st.write(st.session_state['csv_predictions'][['stemming_data', 'Predicted Sentiment']])
 
 if __name__ == '__main__':
     main()
