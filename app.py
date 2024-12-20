@@ -44,15 +44,12 @@ def main():
                 X_test = vectorizer.transform(data['stemming_data'])
 
                 # Prediksi Sentimen
-                if st.button("Prediksi Sentiment CSV", key="predict_csv_button"):
+                if st.button("Prediksi Sentiment"):
                     # Prediksi dengan model yang sudah dilatih
                     predictions = model.predict(X_test)
 
                     # Tambahkan hasil prediksi ke data
                     data['Predicted Sentiment'] = predictions
-
-                    # Simpan hasil prediksi di session_state
-                    st.session_state['csv_predictions'] = data
 
                     st.write("Hasil Prediksi Sentiment:")
                     st.write(data[['stemming_data', 'Predicted Sentiment']])
@@ -84,18 +81,21 @@ def main():
                         file_name="hasil_prediksi.csv",
                         mime="text/csv"
                     )
+                else:
+                    st.warning("Klik tombol di atas untuk memulai prediksi sentimen pada file yang diunggah.")
+                    
+            # Input untuk prediksi kata/kalimat
+            st.subheader("Prediksi Sentimen Berdasarkan Input Teks")
+            user_input = st.text_input("Masukkan teks Anda di sini:")
+            if st.button("Prediksi Sentiment", key="predict_text_button"):  # Beri key unik
+                if user_input:
+                    # Transformasi teks menggunakan vectorizer
+                    input_vectorized = vectorizer.transform([user_input])
+            
+                    # Prediksi sentimen
+                    sentiment_prediction = model.predict(input_vectorized)[0]
+                    st.write(f"Prediksi Sentimen untuk teks: **{sentiment_prediction}**")
 
-    # Input untuk prediksi kata/kalimat
-    st.subheader("Prediksi Sentimen Berdasarkan Input Teks")
-    user_input = st.text_input("Masukkan teks Anda di sini:")
-    if st.button("Prediksi Sentiment Input Teks", key="predict_text_button"):  # Beri key unik
-        if user_input and model and vectorizer:
-            # Transformasi teks menggunakan vectorizer
-            input_vectorized = vectorizer.transform([user_input])
-        
-            # Prediksi sentimen
-            sentiment_prediction = model.predict(input_vectorized)[0]
-            st.write(f"Prediksi Sentimen untuk teks: **{sentiment_prediction}**")
 
 if __name__ == '__main__':
     main()
