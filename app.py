@@ -90,14 +90,15 @@ def main():
             # Input untuk prediksi kata/kalimat
             st.subheader("Prediksi Sentimen Berdasarkan Input Teks")
             user_input = st.text_input("Masukkan teks Anda di sini:")
-            if st.button("Prediksi Sentiment"):
+            if st.button("Prediksi Sentiment", key="predict_text_button"):  # Beri key unik
                 if user_input:
                     # Transformasi teks menggunakan vectorizer
                     input_vectorized = vectorizer.transform([user_input])
-    
+            
                     # Prediksi sentimen
                     sentiment_prediction = model.predict(input_vectorized)[0]
                     st.write(f"Prediksi Sentimen untuk teks: **{sentiment_prediction}**")
+
 
 if __name__ == '__main__':
     main()
