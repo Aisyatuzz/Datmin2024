@@ -21,6 +21,7 @@ def main():
     st.title("Analisis Sentimen SpotifyWrapped 2024")
 
     # Bagian untuk upload file
+    st.subheader("Prediksi Sentimen Berdasarkan File CSV")
     uploaded_file = st.file_uploader("Upload file CSV Anda", type=["csv"])
     if uploaded_file is not None:
         # Load data
@@ -43,7 +44,7 @@ def main():
                 X_test = vectorizer.transform(data['stemming_data'])
 
                 # Prediksi Sentimen
-                if st.button("Prediksi Sentimen"):
+                if st.button("Prediksi Sentiment"):
                     # Prediksi dengan model yang sudah dilatih
                     predictions = model.predict(X_test)
 
@@ -76,7 +77,7 @@ def main():
                     predictions = st.session_state['predictions']
                     data['Predicted Sentiment'] = predictions
 
-                    st.write("Hasil Prediksi Sentimen:")
+                    st.write("Hasil Prediksi Sentiment:")
                     st.write(data[['stemming_data', 'Predicted Sentiment']])
 
                     # Visualisasi distribusi sentimen
