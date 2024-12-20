@@ -18,9 +18,10 @@ def load_model_from_url(url):
 # Fungsi utama untuk aplikasi
 def main():
     # Title untuk aplikasi
-    st.title("Analisis Sentimen SpotifyWrapped 2024")
+    st.title("Analisis Sentiment SpotifyWrapped 2024")
 
     # Bagian untuk upload file
+    st.subheader("Prediksi Sentimen Berdasarkan File CSV")
     uploaded_file = st.file_uploader("Upload file CSV Anda", type=["csv"])
     if uploaded_file is not None:
         # Load data
@@ -37,7 +38,6 @@ def main():
 
         # Pastikan model dan vectorizer berhasil di-load
         if model and vectorizer:
-            st.subheader("Prediksi Sentimen Berdasarkan File CSV")
             # Validasi kolom 'stemming_data'
             if 'stemming_data' in data.columns:
                 # Transformasi data menggunakan vectorizer
@@ -83,10 +83,7 @@ def main():
                     )
                 else:
                     st.warning("Klik tombol di atas untuk memulai prediksi sentimen pada file yang diunggah.")
-
-            else:
-                st.error("Kolom 'stemming_data' tidak ditemukan dalam file yang diunggah.")
-
+                    
             # Input untuk prediksi kata/kalimat
             st.subheader("Prediksi Sentimen Berdasarkan Input Teks")
             user_input = st.text_input("Masukkan teks Anda di sini:")
@@ -98,6 +95,11 @@ def main():
                     # Prediksi sentimen
                     sentiment_prediction = model.predict(input_vectorized)[0]
                     st.write(f"Prediksi Sentimen untuk teks: **{sentiment_prediction}**")
+
+            else:
+                st.error("Kolom 'stemming_data' tidak ditemukan dalam file yang diunggah.")
+
+            
 
 
 if __name__ == '__main__':
