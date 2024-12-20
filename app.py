@@ -18,10 +18,9 @@ def load_model_from_url(url):
 # Fungsi utama untuk aplikasi
 def main():
     # Title untuk aplikasi
-    st.title("Analisis Sentiment SpotifyWrapped 2024")
+    st.title("Analisis Sentimen SpotifyWrapped 2024")
 
     # Bagian untuk upload file
-    st.subheader("Prediksi Sentimen Berdasarkan File CSV")
     uploaded_file = st.file_uploader("Upload file CSV Anda", type=["csv"])
     if uploaded_file is not None:
         # Load data
@@ -44,14 +43,40 @@ def main():
                 X_test = vectorizer.transform(data['stemming_data'])
 
                 # Prediksi Sentimen
-                if st.button("Prediksi Sentiment"):
+                if st.button("Prediksi Sentimen"):
                     # Prediksi dengan model yang sudah dilatih
                     predictions = model.predict(X_test)
+
+                    # Simpan hasil prediksi di session_state
+                    st.session_state['predictions'] = predictions
+                    st.session_state['data'] = data
+                    st.session_state['X_test'] = X_test
 
                     # Tambahkan hasil prediksi ke data
                     data['Predicted Sentiment'] = predictions
 
-                    st.write("Hasil Prediksi Sentiment:")
+                    # Simpan hasil prediksi di session_state
+                    st.session_state['results'] = data
+
+                    # Evaluasi Akurasi jika ada label 'sentiment'
+                    if 'sentiment' in data.columns:
+                        accuracy = accuracy_score(data['sentiment'], predictions)
+                        report_dict = classification_report(data['sentiment'], predictions, output_dict=True)
+                        report_df = pd.DataFrame(report_dict).transpose()  # Konversi ke DataFrame
+
+                        st.session_state['accuracy'] = accuracy
+                        st.session_state['report_df'] = report_df
+                    else:
+                        st.session_state['accuracy'] = None
+                        st.session_state['report_df'] = None
+
+                # Tampilkan hasil prediksi dan evaluasi jika tersedia di session_state
+                if 'predictions' in st.session_state:
+                    data = st.session_state['data']
+                    predictions = st.session_state['predictions']
+                    data['Predicted Sentiment'] = predictions
+
+                    st.write("Hasil Prediksi Sentimen:")
                     st.write(data[['stemming_data', 'Predicted Sentiment']])
 
                     # Visualisasi distribusi sentimen
@@ -65,14 +90,13 @@ def main():
                     )
                     st.plotly_chart(fig_bar)
 
-                    # Evaluasi akurasi jika tersedia label 'sentiment'
-                    if 'sentiment' in data.columns:
-                        accuracy = accuracy_score(data['sentiment'], predictions)
-                        report_dict = classification_report(data['sentiment'], predictions, output_dict=True)
-                        report_df = pd.DataFrame(report_dict).transpose()
-                        st.success(f"Akurasi Model: {accuracy:.2%}")
+                    # Evaluasi akurasi jika tersedia
+                    if st.session_state['accuracy'] is not None:
+                        st.success(f"Akurasi Model: {st.session_state['accuracy']:.2%}")
                         st.write("Laporan Klasifikasi:")
-                        st.table(report_df)
+                        st.table(st.session_state['report_df'])  # Tampilkan laporan dalam bentuk tabel
+                    else:
+                        st.warning("Kolom 'sentiment' tidak ditemukan. Tidak dapat menghitung akurasi.")
 
                     # Tombol untuk mengunduh hasil prediksi
                     st.download_button(
@@ -81,9 +105,10 @@ def main():
                         file_name="hasil_prediksi.csv",
                         mime="text/csv"
                     )
-                else:
-                    st.warning("Klik tombol di atas untuk memulai prediksi sentimen pada file yang diunggah.")
-                    
+
+            else:
+                st.error("Kolom 'stemming_data' tidak ditemukan dalam file yang diunggah.")
+
             # Input untuk prediksi kata/kalimat
             st.subheader("Prediksi Sentimen Berdasarkan Input Teks")
             user_input = st.text_input("Masukkan teks Anda di sini:")
